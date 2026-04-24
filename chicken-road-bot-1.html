@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🐔 Chicken Road Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon: #00ffe7;
+    --neon2: #ff4e00;
+    --neon3: #ffe600;
+    --bg: #0a0a0f;
+    --panel: #0f1117;
+    --panel2: #161820;
+    --border: #1e2030;
+    --green: #00ff88;
+    --red: #ff2255;
+    --grey: #4a4f6a;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background: var(--bg);
+    color: #e0e6ff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0d0d18 0%, #1a0a00 100%);
+    border-bottom: 2px solid var(--neon2);
+    padding: 14px 16px 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,78,0,0.08), transparent);
+    animation: scan 3s linear infinite;
+  }
+  @keyframes scan { to { left: 200%; } }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .chicken-icon {
+    font-size: 36px;
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+
+  .header-title h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--neon2);
+    text-shadow: 0 0 12px rgba(255,78,0,0.7);
+    letter-spacing: 2px;
+  }
+  .header-title p {
+    font-size: 11px;
+    color: var(--neon);
+    letter-spacing: 1px;
+    opacity: 0.8;
+  }
+
+  .warning-box {
+    background: rgba(255,78,0,0.1);
+    border: 1px solid rgba(255,78,0,0.3);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 10px;
+    color: #ff9966;
+    text-align: center;
+  }
+
+  /* MAIN */
+  .main { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* SESSION PANEL */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon), transparent);
+    opacity: 0.4;
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--neon);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .panel-title::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: var(--neon);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--neon);
+  }
+
+  /* BANKROLL INPUTS */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--grey);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .input-group input, .input-group select {
+    width: 100%;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group input:focus, .input-group select:focus {
+    border-color: var(--neon);
+    box-shadow: 0 0 8px rgba(0,255,231,0.2);
+  }
+  .input-group select option { background: #0f1117; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-box {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .stat-box .val {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--neon3);
+  }
+  .stat-box .lbl {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--grey);
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  /* BIG ADVICE */
+  .advice-card {
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+  .advice-card.jump {
+    background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,136,0.05));
+    border: 2px solid var(--green);
+    box-shadow: 0 0 24px rgba(0,255,136,0.2), inset 0 0 40px rgba(0,255,136,0.05);
+  }
+  .advice-card.wait {
+    background: linear-gradient(135deg, rgba(255,34,85,0.15), rgba(255,34,85,0.05));
+    border: 2px solid var(--red);
+    box-shadow: 0 0 24px rgba(255,34,85,0.2), inset 0 0 40px rgba(255,34,85,0.05);
+  }
+  .advice-card.neutral {
+    background: linear-gradient(135deg, rgba(255,230,0,0.1), rgba(255,230,0,0.03));
+    border: 2px solid var(--neon3);
+    box-shadow: 0 0 20px rgba(255,230,0,0.15);
+  }
+  .advice-emoji {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 8px;
+    animation: pulse-emoji 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-emoji {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .advice-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+  .advice-card.jump .advice-label { color: var(--green); text-shadow: 0 0 16px rgba(0,255,136,0.8); }
+  .advice-card.wait .advice-label { color: var(--red); text-shadow: 0 0 16px rgba(255,34,85,0.8); }
+  .advice-card.neutral .advice-label { color: var(--neon3); }
+
+  .advice-reason {
+    font-size: 13px;
+    color: #aab0cc;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+  }
+
+  .multiplier-target {
+    margin-top: 10px;
+    display: inline-block;
+    background: rgba(0,255,231,0.1);
+    border: 1px solid rgba(0,255,231,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--neon);
+  }
+
+  /* ROUND LOG BUTTONS */
+  .round-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .btn {
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-win {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #001a0d;
+    box-shadow: 0 4px 16px rgba(0,255,136,0.3);
+  }
+  .btn-lose {
+    background: linear-gradient(135deg, #ff2255, #cc0033);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255,34,85,0.3);
+  }
+  .btn-full {
+    grid-column: 1/-1;
+    background: linear-gradient(135deg, var(--neon2), #cc3300);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(255,78,0,0.4);
+    font-size: 13px;
+    padding: 16px;
+  }
+
+  /* STRATEGY TABLE */
+  .strat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .strat-table th {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--grey);
+    text-transform: uppercase;
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .strat-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(30,32,48,0.5);
+    color: #ccd0e8;
+  }
+  .strat-table tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Orbitron', monospace;
+  }
+  .badge-safe { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+  .badge-med { background: rgba(255,230,0,0.15); color: var(--neon3); border: 1px solid rgba(255,230,0,0.3); }
+  .badge-risk { background: rgba(255,34,85,0.15); color: var(--red); border: 1px solid rgba(255,34,85,0.3); }
+
+  /* HISTORY */
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--panel2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .history-item .round-n { color: var(--grey); font-size: 10px; }
+  .history-item .result-w { color: var(--green); font-family: 'Orbitron', monospace; font-size: 11px; }
+  .history-item .result-l { color: var(--red); font-family: 'Orbitron', monospace; font-size: 11px; }
+  .empty-hist { color: var(--grey); text-align: center; font-size: 12px; padding: 20px; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 6px;
+    background: var(--panel2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease, background 0.3s;
+  }
+
+  /* SECTION DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--grey);
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--panel);
+    border: 1px solid var(--neon);
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: var(--neon);
+    box-shadow: 0 4px 24px rgba(0,255,231,0.3);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--panel2); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="chicken-icon">🐔</span>
+    <div class="header-title">
+      <h1>CHICKEN BOT</h1>
+      <p>ROAD RACE · STRATEGY ASSISTANT</p>
+    </div>
+  </div>
+  <div class="warning-box">
+    ⚡ Outil de gestion de bankroll — aucune prédiction réelle possible sur RNG serveur
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SESSION CONFIG -->
+  <div class="panel">
+    <div class="panel-title">SESSION CONFIG</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Solde (€)</label>
+        <input type="number" id="bankroll" value="5.69" step="0.01" min="0" oninput="recalculate()">
+      </div>
+      <div class="input-group">
+        <label>Mise (€)</label>
+        <input type="number" id="bet" value="0.30" step="0.01" min="0.01" oninput="recalculate()">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Difficulté</label>
+        <select id="difficulty" onchange="recalculate()">
+          <option value="easy">EASY</option>
+          <option value="medium">MEDIUM</option>
+          <option value="hardcore" selected>HARDCORE</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Stratégie</label>
+        <select id="strategy" onchange="recalculate()">
+          <option value="conservative">Conservatrice</option>
+          <option value="balanced" selected>Équilibrée</option>
+          <option value="aggressive">Agressive</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="val" id="stat-rounds">0</div>
+        <div class="lbl">Rounds</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" id="stat-winrate">—</div>
+        <div class="lbl">Win Rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" id="stat-pnl">+0.00€</div>
+        <div class="lbl">P&L Session</div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="bankroll-bar" style="width:100%; background: var(--green);"></div>
+    </div>
+    <div style="font-size:10px; color:var(--grey); text-align:center; margin-top:4px;" id="bankroll-label">Bankroll OK</div>
+  </div>
+
+  <!-- ADVICE CARD -->
+  <div class="advice-card neutral" id="advice-card">
+    <span class="advice-emoji" id="advice-emoji">🐔</span>
+    <div class="advice-label" id="advice-label">EN ATTENTE</div>
+    <div class="advice-reason" id="advice-reason">Configure ta session et commence à jouer !</div>
+    <div class="multiplier-target" id="mult-target">Cible : — X</div>
+  </div>
+
+  <!-- LOG ROUND -->
+  <div class="panel">
+    <div class="panel-title">ENREGISTRE LE ROUND</div>
+    <div style="margin-bottom:10px;">
+      <div class="input-group">
+        <label>Multiplicateur atteint (ex: 1.44)</label>
+        <input type="number" id="round-mult" value="" step="0.01" min="0" placeholder="0.00">
+      </div>
+    </div>
+    <div class="round-btns">
+      <button class="btn btn-win" onclick="logRound('win')">✅ GAGNÉ</button>
+      <button class="btn btn-lose" onclick="logRound('lose')">💥 PERDU</button>
+      <button class="btn btn-full" onclick="recalculate()">🔄 RECALCULER</button>
+    </div>
+  </div>
+
+  <!-- STRATEGY TABLE -->
+  <div class="panel">
+    <div class="panel-title">GUIDE MULTIPLICATEURS</div>
+    <table class="strat-table">
+      <thead>
+        <tr>
+          <th>Multiplicateur</th>
+          <th>Risque</th>
+          <th>Conseil</th>
+        </tr>
+      </thead>
+      <tbody id="strat-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="panel">
+    <div class="panel-title">HISTORIQUE SESSION</div>
+    <div class="history-list" id="history-list">
+      <div class="empty-hist">Aucun round joué</div>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-full" onclick="resetSession()" style="font-size:11px; padding:12px;">🗑️ RESET SESSION</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ STATE ============
+let session = {
+  initialBankroll: 5.69,
+  currentBankroll: 5.69,
+  bet: 0.30,
+  difficulty: 'hardcore',
+  strategy: 'balanced',
+  rounds: [],
+  wins: 0,
+  losses: 0
+};
+
+// ============ STRATEGY CONFIGS ============
+const STRATEGIES = {
+  conservative: { targetMult: 1.3, stopLossRounds: 5, stopLossRate: 0.7, name: "Conservatrice" },
+  balanced:     { targetMult: 1.8, stopLossRounds: 7, stopLossRate: 0.6, name: "Équilibrée" },
+  aggressive:   { targetMult: 2.5, stopLossRounds: 10, stopLossRate: 0.5, name: "Agressive" }
+};
+
+const DIFFICULTY_CRASH_RATE = {
+  easy:     0.25,
+  medium:   0.40,
+  hardcore: 0.60
+};
+
+const MULT_TABLE = [
+  { mult: "1.1–1.3X", risk: "safe",   label: "SÉCURISÉ",   advice: "Encaisse tôt, gains faibles mais réguliers" },
+  { mult: "1.4–1.8X", risk: "safe",   label: "RECOMMANDÉ", advice: "Zone idéale risk/reward équilibré" },
+  { mult: "1.9–2.5X", risk: "med",    label: "PRUDENT",    advice: "Possible mais attention au crash" },
+  { mult: "2.6–4.0X", risk: "risk",   label: "RISQUÉ",     advice: "Crash fréquent en HARDCORE ici" },
+  { mult: "4.0X+",    risk: "risk",   label: "DANGER",     advice: "Très rare en HARDCORE, ne pas attendre" },
+];
+
+// ============ INIT ============
+function init() {
+  renderStratTable();
+  recalculate();
+}
+
+function renderStratTable() {
+  const tbody = document.getElementById('strat-tbody');
+  tbody.innerHTML = MULT_TABLE.map(row => `
+    <tr>
+      <td style="font-family:'Orbitron',monospace; font-size:11px; color:#e0e6ff;">${row.mult}</td>
+      <td><span class="badge badge-${row.risk}">${row.label}</span></td>
+      <td style="color:var(--grey); font-size:11px;">${row.advice}</td>
+    </tr>
+  `).join('');
+}
+
+// ============ CORE LOGIC ============
+function recalculate() {
+  // Read inputs
+  session.currentBankroll = parseFloat(document.getElementById('bankroll').value) || 5.69;
+  session.bet = parseFloat(document.getElementById('bet').value) || 0.30;
+  session.difficulty = document.getElementById('difficulty').value;
+  session.strategy = document.getElementById('strategy').value;
+
+  if (session.rounds.length === 0) {
+    session.initialBankroll = session.currentBankroll;
+  }
+
+  const strat = STRATEGIES[session.strategy];
+  const crashRate = DIFFICULTY_CRASH_RATE[session.difficulty];
+  const total = session.wins + session.losses;
+  const winRate = total > 0 ? session.wins / total : null;
+  const pnl = session.currentBankroll - session.initialBankroll;
+
+  // Update stats display
+  document.getElementById('stat-rounds').textContent = total;
+  document.getElementById('stat-winrate').textContent = winRate !== null ? Math.round(winRate * 100) + '%' : '—';
+  const pnlEl = document.getElementById('stat-pnl');
+  pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + '€';
+  pnlEl.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Bankroll health bar
+  const ratio = Math.max(0, Math.min(1, session.currentBankroll / session.initialBankroll));
+  const bar = document.getElementById('bankroll-bar');
+  const lbl = document.getElementById('bankroll-label');
+  bar.style.width = (ratio * 100) + '%';
+  if (ratio > 0.7) { bar.style.background = 'var(--green)'; lbl.textContent = '✅ Bankroll saine'; lbl.style.color = 'var(--green)'; }
+  else if (ratio > 0.4) { bar.style.background = 'var(--neon3)'; lbl.textContent = '⚠️ Attention à la bankroll'; lbl.style.color = 'var(--neon3)'; }
+  else { bar.style.background = 'var(--red)'; lbl.textContent = '🛑 STOP — Bankroll en danger'; lbl.style.color = 'var(--red)'; }
+
+  // Generate advice
+  generateAdvice(strat, crashRate, winRate, pnl, ratio, total);
+}
+
+function generateAdvice(strat, crashRate, winRate, pnl, bankrollRatio, total) {
+  const card = document.getElementById('advice-card');
+  const emoji = document.getElementById('advice-emoji');
+  const label = document.getElementById('advice-label');
+  const reason = document.getElementById('advice-reason');
+  const multTarget = document.getElementById('mult-target');
+
+  // Determine bet safety
+  const betRatio = session.bet / session.currentBankroll;
+  let advice = 'jump';
+  let emojiStr = '🚀';
+  let labelStr = 'SAUTE !';
+  let reasonStr = '';
+  let targetStr = '';
+
+  // STOP CONDITIONS
+  if (bankrollRatio < 0.3) {
+    advice = 'wait';
+    emojiStr = '🛑';
+    labelStr = 'STOP !';
+    reasonStr = 'Bankroll trop basse. Arrête la session maintenant !';
+    targetStr = 'Session terminée';
+  } else if (betRatio > 0.15) {
+    advice = 'wait';
+    emojiStr = '⚠️';
+    labelStr = 'MISE TROP HAUTE';
+    reasonStr = `Ta mise (${session.bet}€) = ${Math.round(betRatio*100)}% de ton solde. Descends à ${(session.currentBankroll * 0.05).toFixed(2)}€ max.`;
+    targetStr = `Mise recommandée : ${(session.currentBankroll * 0.05).toFixed(2)}€`;
+  } else if (total >= strat.stopLossRounds && winRate !== null && winRate < strat.stopLossRate) {
+    advice = 'wait';
+    emojiStr = '😵';
+    labelStr = 'MAUVAISE SÉRIE';
+    reasonStr = `${Math.round(winRate*100)}% de wins sur ${total} rounds. Fais une pause, change de stratégie.`;
+    targetStr = 'Reprends dans 10 min';
+  } else if (pnl > session.initialBankroll * 0.3) {
+    advice = 'jump';
+    emojiStr = '💰';
+    labelStr = 'EN FORME !';
+    reasonStr = `+${pnl.toFixed(2)}€ de profit. Continue mais reste discipliné(e) !`;
+    targetStr = `Encaisse à ${strat.targetMult}X`;
+  } else if (session.difficulty === 'hardcore') {
+    if (winRate !== null && winRate < 0.4 && total > 3) {
+      advice = 'wait';
+      emojiStr = '🔥';
+      labelStr = 'SÉRIE NOIRE';
+      reasonStr = 'HARDCORE + mauvaise série = danger. Attends ou baisse la mise.';
+      targetStr = `Mise max : ${(session.currentBankroll * 0.03).toFixed(2)}€`;
+    } else {
+      advice = 'jump';
+      emojiStr = '⚡';
+      labelStr = 'JOUE !';
+      reasonStr = `Mode HARDCORE — encaisse vite ! Ne dépasse pas ${strat.targetMult}X.`;
+      targetStr = `Cible : ${strat.targetMult}X — encaisse là !`;
+    }
+  } else {
+    advice = 'jump';
+    emojiStr = '🐔';
+    labelStr = 'SAUTE !';
+    reasonStr = `Conditions OK. Encaisse à ${strat.targetMult}X, ne sois pas greedy !`;
+    targetStr = `Cible : ${strat.targetMult}X`;
+  }
+
+  // Apply to DOM
+  card.className = 'advice-card ' + advice;
+  emoji.textContent = emojiStr;
+  label.textContent = labelStr;
+  reason.textContent = reasonStr;
+  multTarget.textContent = targetStr;
+}
+
+// ============ LOG ROUND ============
+function logRound(result) {
+  const multInput = parseFloat(document.getElementById('round-mult').value);
+  const mult = isNaN(multInput) ? (result === 'win' ? 1.5 : 0) : multInput;
+  const bet = session.bet;
+  let pnl = 0;
+
+  if (result === 'win') {
+    pnl = +(bet * mult - bet).toFixed(2);
+    session.wins++;
+    showToast(`+${pnl.toFixed(2)}€ 🎉 à ${mult}X`);
+  } else {
+    pnl = -bet;
+    session.losses++;
+    showToast(`-${bet.toFixed(2)}€ 💥`);
+  }
+
+  session.currentBankroll = +(session.currentBankroll + pnl).toFixed(2);
+  document.getElementById('bankroll').value = session.currentBankroll.toFixed(2);
+
+  session.rounds.push({ result, mult, pnl, bankroll: session.currentBankroll });
+  document.getElementById('round-mult').value = '';
+
+  renderHistory();
+  recalculate();
+}
+
+// ============ HISTORY ============
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (session.rounds.length === 0) {
+    list.innerHTML = '<div class="empty-hist">Aucun round joué</div>';
+    return;
+  }
+  const reversed = [...session.rounds].reverse();
+  list.innerHTML = reversed.map((r, i) => {
+    const n = session.rounds.length - i;
+    return `
+      <div class="history-item">
+        <span class="round-n">#${n}</span>
+        <span style="color:#8890aa; font-size:11px;">${r.mult ? r.mult + 'X' : '—'}</span>
+        <span class="${r.result === 'win' ? 'result-w' : 'result-l'}">
+          ${r.pnl >= 0 ? '+' : ''}${r.pnl.toFixed(2)}€
+        </span>
+        <span style="color:var(--grey); font-size:10px;">${r.bankroll.toFixed(2)}€</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ RESET ============
+function resetSession() {
+  const br = parseFloat(document.getElementById('bankroll').value) || 5.69;
+  session.rounds = [];
+  session.wins = 0;
+  session.losses = 0;
+  session.initialBankroll = br;
+  session.currentBankroll = br;
+  renderHistory();
+  recalculate();
+  showToast('Session réinitialisée 🔄');
+}
+
+// ============ TOAST ============
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============ START ============
+init();
+</script>
+</body>
+</html>
